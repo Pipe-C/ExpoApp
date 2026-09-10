@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { welcomeStyles as styles } from '../styles/welcomeStyles';
 import { HeroCard } from '../components/HeroCard';
 import { CustomAlert } from '../components/CustomAlert';
 import { useWelcomeData } from '../hooks/useWelcomeData';
+import { AppStackParamList } from '../types/navigation';
+
+type WelcomeScreenNavigationProp = NativeStackNavigationProp<AppStackParamList, 'Welcome'>;
 
 export const WelcomeScreen: React.FC = () => {
+  const navigation = useNavigation<WelcomeScreenNavigationProp>();
   const { data, loading, error } = useWelcomeData();
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
 
   const handlePrimaryPress = () => {
     setAlertVisible(true);
   };
+
+  const handleAlertClose = () => {
+    setAlertVisible(false);
+    navigation.navigate('Menu');
+  }
 
   if (loading) {
     return (
