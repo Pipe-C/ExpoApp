@@ -1,70 +1,73 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { menuStyles as styles } from '../styles/profileStyles';
 import { ProfileCard } from '../components/ProfileCard';
-import { ProfileData } from '../types/profile';
 import { AppStackParamList } from '../types/navigation';
+import { ProfileData } from '../types/profile';
 
-// Definición del tipo para la navegación de esta pantalla
-type MenuScreenNavigationProp = NativeStackNavigationProp<AppStackParamList, 'Menu'>;
+type MenuNavProp = NativeStackNavigationProp<AppStackParamList, 'Menu'>;
 
-const PROFILES_DATA: ProfileData[] = [
+const PROFILES: ProfileData[] = [
   {
     id: '1',
-    name: 'Felipe Cano Rincon',
-    profession: 'Desarrollador de Software',
-    city: 'Medellín, Colombia',
-    imageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
+    name: 'Ana María Ríos',
+    profession: 'Diseñadora UX/UI',
+    city: 'Medellín',
+    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=250&q=80',
   },
   {
     id: '2',
-    name: 'Juan Perez',
-    profession: 'Diseñador Gráfico',
-    city: 'Bogotá, Colombia',
-    imageUrl: 'https://randomuser.me/api/portraits/men/2.jpg',
+    name: 'Carlos Ospina',
+    profession: 'Ingeniero Backend',
+    city: 'Bogotá',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
+  },
+  {
+    id: '3',
+    name: 'Sofia Gómez',
+    profession: 'Product Manager',
+    city: 'Cali',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
   },
 ];
 
 export const MenuScreen: React.FC = () => {
-    // 1. Inicializa la navegación
-  const navigation = useNavigation<MenuScreenNavigationProp>();
+  const navigation = useNavigation<MenuNavProp>();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  // 2. Define la función para navegar a la pantalla del contador
-  const handleGoToCounter = () => {
-    navigation.navigate('Counter');
-  };
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 350,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.eyebrow}>Directorio</Text>
-          <Text style={styles.title}>Perfiles Registrados</Text>
-        </View>
+      <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.6}
+          >
+            <Text style={styles.backButtonText}>‹ Inicio</Text>
+          </TouchableOpacity>
 
-        {PROFILES_DATA.map((profile) => (
-          <ProfileCard key={profile.id} profile={profile} />
-        ))}
+          <View style={styles.header}>
+            <Text style={styles.eyebrow}>Comunidad</Text>
+            <Text style={styles.title}>Directorio de Perfiles</Text>
+          </View>
 
-        <TouchableOpacity
-          style={{
-            backgroundColor: '#007AFF',
-            paddingVertical: 14,
-            paddingHorizontal: 20,
-            borderRadius: 12,
-            alignItems: 'center',
-            marginTop: 16,
-          }}
-          onPress={handleGoToCounter}
-        >
-          <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 16 }}>
-            Ir al Contador →
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
+          {PROFILES.map((profile) => (
+            <ProfileCard key={profile.id} profile={profile} />
+          ))}
+        </ScrollView>
+      </Animated.View>
     </SafeAreaView>
   );
 };

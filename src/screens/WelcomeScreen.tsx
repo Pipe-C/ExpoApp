@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, ActivityIndicator, Text } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { welcomeStyles as styles } from '../styles/welcomeStyles';
@@ -9,58 +9,52 @@ import { CustomAlert } from '../components/CustomAlert';
 import { useWelcomeData } from '../hooks/useWelcomeData';
 import { AppStackParamList } from '../types/navigation';
 
-type NavigationProp = NativeStackNavigationProp<AppStackParamList, 'Welcome'>;
+type WelcomeNavProp = NativeStackNavigationProp<AppStackParamList, 'Welcome'>;
 
 export const WelcomeScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
-  const { data, loading, error } = useWelcomeData();
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const navigation = useNavigation<WelcomeNavProp>();
+  const { welcomeData, alertVisible, handlePress, handleConfirm } = useWelcomeData();
 
-  // 1. Al presionar el botón del HeroCard, se muestra la alerta de bienvenida
-  const handlePrimaryPress = () => {
-    setAlertVisible(true);
-  };
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.95)).current;
 
-  // 2. Al presionar "Entendido" en la alerta, se cierra la alerta y se navega al Menú
-  const handleAlertClose = () => {
-    setAlertVisible(false);
-    navigation.navigate('Menu');
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#007AFF" />
-      </View>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>{error || 'Error al cargar los datos.'}</Text>
-      </View>
-    );
-  }
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 350,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [fadeAnim, scaleAnim]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.glowTop} />
-      <View style={styles.glowBottom} />
+    <SafeAreaView style={styles.safeArea}>
+      <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+        <TouchableOpacity
+          style={{ alignSelf: 'flex-start', paddingVertical: 8, marginBottom: 12 }}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.6}
+        >
+          <Text style={{ color: '#007AFF', fontSize: 17 }}>‹ Inicio</Text>
+        </TouchableOpacity>
 
-      {/* HeroCard recibe handlePrimaryPress por props */}
-      <HeroCard data={data} onPrimaryPress={handlePrimaryPress} />
+        <Animated.View style={{ transform: [{ scale: scaleAnim }], width: '100%', alignItems: 'center' }}>
+          <HeroCard data={welcomeData} onPress={handlePress} />
+        </Animated.View>
 
-      {/* CustomAlert recibe handleAlertClose para hacer el cambio de pantalla */}
-      <CustomAlert
-        visible={alertVisible}
-        title="¡Bienvenido!"
-        message="La app está en desarrollo."
-        buttonText="Entendido"
-        onClose={handleAlertClose}
-      />
-
-      <StatusBar style="dark" />
-    </View>
+        <CustomAlert
+          visible={alertVisible}
+          title="Notificación"
+          message="Has interactuado con la tarjeta de bienvenida estilo iOS."
+          onConfirm={handleConfirm}
+        />
+      </Animated.View>
+    </SafeAreaView>
   );
 };
