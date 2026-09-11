@@ -9,21 +9,23 @@ import { CustomAlert } from '../components/CustomAlert';
 import { useWelcomeData } from '../hooks/useWelcomeData';
 import { AppStackParamList } from '../types/navigation';
 
-type WelcomeScreenNavigationProp = NativeStackNavigationProp<AppStackParamList, 'Welcome'>;
+type NavigationProp = NativeStackNavigationProp<AppStackParamList, 'Welcome'>;
 
 export const WelcomeScreen: React.FC = () => {
-  const navigation = useNavigation<WelcomeScreenNavigationProp>();
+  const navigation = useNavigation<NavigationProp>();
   const { data, loading, error } = useWelcomeData();
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
 
+  // 1. Al presionar el botón del HeroCard, se muestra la alerta de bienvenida
   const handlePrimaryPress = () => {
     setAlertVisible(true);
   };
 
+  // 2. Al presionar "Entendido" en la alerta, se cierra la alerta y se navega al Menú
   const handleAlertClose = () => {
     setAlertVisible(false);
     navigation.navigate('Menu');
-  }
+  };
 
   if (loading) {
     return (
@@ -43,20 +45,19 @@ export const WelcomeScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Resplandor de fondo ajustado */}
       <View style={styles.glowTop} />
       <View style={styles.glowBottom} />
 
-      {/* Tarjeta principal */}
+      {/* HeroCard recibe handlePrimaryPress por props */}
       <HeroCard data={data} onPrimaryPress={handlePrimaryPress} />
 
-      {/* Alerta iOS Simplificada */}
+      {/* CustomAlert recibe handleAlertClose para hacer el cambio de pantalla */}
       <CustomAlert
         visible={alertVisible}
         title="¡Bienvenido!"
         message="La app está en desarrollo."
         buttonText="Entendido"
-        onClose={() => setAlertVisible(false)}
+        onClose={handleAlertClose}
       />
 
       <StatusBar style="dark" />
