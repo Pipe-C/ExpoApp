@@ -54,6 +54,25 @@ export const profileCardStyles = StyleSheet.create({
     color: Theme.colors.accent,
     letterSpacing: -0.2,
   },
+  detailCard: {
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.borderRadius.md,
+    padding: Theme.spacing.md,
+    marginTop: Theme.spacing.xs,
+    borderWidth: 1,
+    borderColor: Theme.colors.surfaceBorder,
+  },
+  detailLabel: {
+    fontSize: 12,
+    color: Theme.colors.textSecondary,
+    fontWeight: '600',
+    marginBottom: 4,
+    textTransform: 'uppercase',
+  },
+  detailValue: {
+    fontSize: 16,
+    color: Theme.colors.textPrimary,
+  },
 });
 
 export const menuStyles = StyleSheet.create({
@@ -63,8 +82,19 @@ export const menuStyles = StyleSheet.create({
   },
   container: {
     paddingHorizontal: Theme.spacing.lg,
-    paddingTop: Theme.spacing.md,
+    paddingTop: Theme.spacing.xs,
     paddingBottom: Theme.spacing.xl,
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: Theme.spacing.xs,
+    marginBottom: Theme.spacing.sm,
+  },
+  backButtonText: {
+    color: Theme.colors.accent,
+    fontSize: 17,
+    fontWeight: '400',
+    letterSpacing: -0.4,
   },
   header: {
     marginBottom: Theme.spacing.lg,
@@ -77,5 +107,20 @@ export const menuStyles = StyleSheet.create({
   title: {
     color: Theme.colors.textPrimary,
     ...Theme.typography.title,
+  },
+  navButton: {
+    backgroundColor: Theme.colors.accent,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: Theme.borderRadius.md,
+    alignItems: 'center',
+    marginTop: Theme.spacing.md,
+    ...Theme.shadows.card,
+  },
+  navButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 16,
+    letterSpacing: -0.3,
   },
 });
