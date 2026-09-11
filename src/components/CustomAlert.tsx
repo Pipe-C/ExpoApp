@@ -1,47 +1,33 @@
 import React from 'react';
-import { Modal, View, Text, StyleSheet, Pressable } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Theme } from '../styles/theme';
 
-interface CustomAlertProps {
+export interface CustomAlertProps {
   visible: boolean;
   title: string;
   message: string;
-  buttonText?: string;
-  onClose: () => void;
+  onConfirm: () => void;
 }
 
 export const CustomAlert: React.FC<CustomAlertProps> = ({
   visible,
   title,
   message,
-  buttonText = 'Entendido',
-  onClose,
+  onConfirm,
 }) => {
   return (
-    <Modal
-      transparent
-      visible={visible}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal transparent visible={visible} animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.alertContainer}>
-          <View style={styles.content}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.message}>{message}</Text>
-          </View>
-
-          <View style={styles.divider} />
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.button,
-              pressed && styles.buttonPressed,
-            ]}
-            onPress={onClose}
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.message}>{message}</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={onConfirm}
+            activeOpacity={0.8}
           >
-            <Text style={styles.buttonText}>{buttonText}</Text>
-          </Pressable>
+            <Text style={styles.buttonText}>Aceptar</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -51,55 +37,46 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: Theme.colors.overlay,
-    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'center',
-    paddingHorizontal: Theme.spacing.xl,
+    alignItems: 'center',
+    paddingHorizontal: Theme.spacing.lg,
   },
   alertContainer: {
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.borderRadius.lg,
+    padding: Theme.spacing.xl,
     width: '100%',
-    maxWidth: 290,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 18,
-    overflow: 'hidden',
-    ...Theme.shadows.alert,
-  },
-  content: {
-    paddingTop: 20,
-    paddingBottom: 16,
-    paddingHorizontal: 20,
+    maxWidth: 320,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Theme.colors.surfaceBorder,
+    ...Theme.shadows.card,
   },
   title: {
-    fontSize: 17,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     color: Theme.colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: 6,
-    letterSpacing: -0.4,
+    marginBottom: Theme.spacing.xs,
   },
   message: {
-    fontSize: 13,
+    fontSize: 14,
     color: Theme.colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 18,
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#C6C6C8',
+    marginBottom: Theme.spacing.lg,
+    lineHeight: 20,
   },
   button: {
-    paddingVertical: 14,
+    backgroundColor: Theme.colors.accent,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: Theme.borderRadius.md,
+    width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonPressed: {
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
   },
   buttonText: {
-    color: Theme.colors.accent,
-    fontSize: 17,
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: '600',
-    letterSpacing: -0.4,
   },
 });

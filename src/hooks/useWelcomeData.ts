@@ -1,31 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { WelcomeData } from '../types/welcome';
-import { fetchWelcomeData } from '../services/welcomeService';
-import { sanitizeHighlights } from '../utils/formatters';
 
 export const useWelcomeData = () => {
-  const [data, setData] = useState<WelcomeData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const result = await fetchWelcomeData();
-        setData({
-          ...result,
-          highlights: sanitizeHighlights(result.highlights),
-        });
-      } catch (err) {
-        setError('Error al cargar la información de bienvenida.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const welcomeData: WelcomeData = {
+    title: '¡Bienvenido de nuevo!',
+    subtitle: 'Explora los módulos y componentes dinámicos con interfaz estilo iOS.',
+    badgeText: 'iOS 18 Design System',
+  };
 
-    loadData();
-  }, []);
+  const handlePress = () => {
+    setAlertVisible(true);
+  };
 
-  return { data, loading, error };
+  const handleConfirm = () => {
+    setAlertVisible(false);
+  };
+
+  return {
+    welcomeData,
+    alertVisible,
+    handlePress,
+    handleConfirm,
+  };
 };
